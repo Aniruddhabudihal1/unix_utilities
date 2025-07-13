@@ -6,17 +6,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-void find(char *, long, char *);
+void find(char *, long, char[]);
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    fprintf(stderr,
-            "please provide the text to be found in the respective file\n");
+    fprintf(stderr, "please provide the text to be found in the respective "
+                    "file with the format:\n<word><file>\n");
     exit(EXIT_FAILURE);
   }
 
-  long size_word = sizeof(argv[1]);
-  char word[size_word];
+  char word[sizeof(argv[1])];
   strcpy(word, argv[1]);
 
   FILE *file_des;
@@ -55,33 +54,40 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void find(char main_buffer[], long size, char *word_to_be_found) {
+void find(char main_buffer[], long size, char word_to_be_found[]) {
   long target_length = strlen(word_to_be_found);
+  printf("%s", &word_to_be_found[target_length]);
   int word_found = 0;
   char *temp = (char *)malloc(size);
   char *line_buff = (char *)malloc(size);
+
   for (int i = 0; i < size; i++) {
-    if (main_buffer[i] == '\n') {
-      if (word_found) {
-        printf("%s\n", line_buff);
+    strncat(temp, &main_buffer[i], 1);
+
+    if (strncmp(&main_buffer[i], "\n", 1) == 0) {
+      if (word_found == 1) {
+        printf("%s\n", temp);
         word_found = 0;
       }
       strcpy(temp, "");
       strcpy(line_buff, "");
+      continue;
     }
-    printf("%s\n", line_buff);
+
     long temp_len = strlen(temp);
+
     if (temp_len == target_length) {
-      if (strcmp(word_to_be_found, temp) == 0) {
+      if (strncmp(word_to_be_found, temp, target_length) == 0) {
+        printf("The word has been found\n");
         word_found = 1;
       }
     }
-    if (main_buffer[i] == ' ') {
+    if (strncmp(&main_buffer[i], " ", 1) == 0) {
       strcat(line_buff, temp);
-      strcat(line_buff, " ");
-      strcat(temp, "");
+      strncat(temp, "", 0);
       continue;
     }
-    strcat(temp, &main_buffer[i]);
   }
+  free(temp);
+  free(line_buff);
 }
