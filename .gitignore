@@ -1,11 +1,11 @@
-# Ignore compiled files
 *.o
 *.out
+*.txt
+wcat
+grepp
 
-# Ignore backups
-*~
 
-# Ignore directories
-build/
+
+
 
 
