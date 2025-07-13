@@ -1,4 +1,0 @@
-This is the second test file 
-second line
-third line
-fourth line
